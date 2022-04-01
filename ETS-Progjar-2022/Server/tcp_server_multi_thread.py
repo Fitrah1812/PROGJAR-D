@@ -83,7 +83,7 @@ def run_server(server_address,is_secure=False):
     sock.bind(server_address)
     # Listen for incoming connections
     sock.listen(1000)
-    threads = dict()
+    texec = dict()
     sum_thread = 0
 
     while True:
@@ -103,10 +103,8 @@ def run_server(server_address,is_secure=False):
         try:
             # process_connection(client_address, connection)
             logging.warning("Mulai Thread Baru")
-
-            threads[sum_thread] = threading.Thread(target=process_connection, args=(client_address, connection))
-            threads[sum_thread].start()
-
+            texec[sum_thread] = threading.Thread(target=process_connection, args=(client_address, connection))
+            texec[sum_thread].start()
             sum_thread+=1
         except ssl.SSLError as error_ssl:
             logging.warning(f"SSL error: {str(error_ssl)}")
