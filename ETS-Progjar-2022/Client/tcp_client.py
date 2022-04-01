@@ -15,7 +15,7 @@ def make_socket(destination_address='localhost',port=12000):
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server_address = (destination_address, port)
-        # logging.warning(f"connecting to {server_address}")
+        logging.warning(f"connecting to {server_address}")
         sock.connect(server_address)
         return sock
     except Exception as ee:
@@ -23,8 +23,6 @@ def make_socket(destination_address='localhost',port=12000):
 
 def make_secure_socket(destination_address='localhost',port=10000):
     try:
-        #get it from https://curl.se/docs/caextract.html
-
         context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
         context.verify_mode=ssl.CERT_OPTIONAL
         context.load_verify_locations(os.getcwd() + '/domain.crt')
@@ -91,22 +89,35 @@ def getdatapemain(nomor=0,is_secure=False):
         print(f"gagal mendapatkan data pemain nomor {nomor}")
     # return hasil
 
-def test_thread(thread_count=1, is_secure=False):
-    threads = dict()
+def getDataPemainRequest(request_data, is_secure=False):
+    for i in range(request_data):
+        getdatapemain(random.randint(1,10), is_secure);
 
-    waktu_awal = datetime.datetime.now()
-    for thread in range(thread_count):
-        threads[thread] = threading.Thread(target=getdatapemain,
-                                           args=(random.randint(1, 10), is_secure))
+def cek_serialisasi(a):
+    #print(a)
+    #serialized = str(dicttoxml.dicttoxml(a))
+    serialized =  json.dumps(a)
+    logging.warning("serialized data")
+    logging.warning(serialized)
+    return serialized
+
+def test_thread(sum_thread=1, is_secure=False,request_awal=1):
+    threads = dict()
+    check_time = datetime.datetime.now()
+    #start
+    for thread in range(sum_thread):
+        threads[thread] = threading.Thread(target=getDataPemainRequest,args=(request_awal, is_secure))
         threads[thread].start()
 
-    for thread in range(thread_count):
+    #join
+    for thread in range(sum_thread):
         threads[thread].join()
 
-    waktu_akhir = datetime.datetime.now()
-    print(
-        f"Jumlah Thread {thread_count} dan Waktu {waktu_akhir - waktu_awal}")
+    after_check_time = datetime.datetime.now()
+    sum_time = after_check_time-check_time
 
+    print(
+        f"Jumlah Thread {sum_thread}, Jumlah Request {request_awal}, Jumlah Response {sum_thread*request_awal} dan Waktu {sum_time} ms")
 
 def lihatversi(is_secure=False):
     cmd=f"versi \r\n\r\n"
@@ -118,4 +129,5 @@ if __name__=='__main__':
     b = 5
     c = 10
     d = 20
-    test_thread(d, True)
+
+    test_thread(c,True,1)

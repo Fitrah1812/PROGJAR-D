@@ -5,6 +5,7 @@ import json
 import dicttoxml
 import os
 import ssl
+import threading
 
 alldata = dict()
 alldata['1']=dict(nomor=1, nama="dean henderson", posisi="kiper")
@@ -82,7 +83,8 @@ def run_server(server_address,is_secure=False):
     sock.bind(server_address)
     # Listen for incoming connections
     sock.listen(1000)
-
+    threads = dict()
+    sum_thread = 0
 
     while True:
         # Wait for a connection
@@ -96,9 +98,16 @@ def run_server(server_address,is_secure=False):
         else:
             connection = koneksi
 
+        logging.warning(f"Incoming connection from {client_address}")
 
         try:
-            process_connection(client_address, connection)
+            # process_connection(client_address, connection)
+            logging.warning("Mulai Thread Baru")
+
+            threads[sum_thread] = threading.Thread(target=process_connection, args=(client_address, connection))
+            threads[sum_thread].start()
+
+            sum_thread+=1
         except ssl.SSLError as error_ssl:
             logging.warning(f"SSL error: {str(error_ssl)}")
 
@@ -126,6 +135,14 @@ def process_connection(client_address, koneksi):
             logging.warning(f"no more data from {client_address}")
             break
     logging.warning("thread selesai")
+
+def serialisasi(a):
+    #print(a)
+    #serialized = str(dicttoxml.dicttoxml(a))
+    serialized =  json.dumps(a)
+    logging.warning("serialized data")
+    logging.warning(serialized)
+    return serialized
 
 
 if __name__=='__main__':
