@@ -102,16 +102,16 @@ def cek_serialisasi(a):
     return serialized
 
 def test_thread(sum_thread=1, is_secure=False,request_awal=1):
-    threads = dict()
+    texec = dict()
     check_time = datetime.datetime.now()
     #start
-    for thread in range(sum_thread):
-        threads[thread] = threading.Thread(target=getDataPemainRequest,args=(request_awal, is_secure))
-        threads[thread].start()
+    for i in range(sum_thread):
+        texec[i] = threading.Thread(target=getDataPemainRequest,args=(request_awal, is_secure))
+        texec[i].start()
 
     #join
-    for thread in range(sum_thread):
-        threads[thread].join()
+    for i in range(sum_thread):
+        texec[i].join()
 
     after_check_time = datetime.datetime.now()
     sum_time = after_check_time-check_time
