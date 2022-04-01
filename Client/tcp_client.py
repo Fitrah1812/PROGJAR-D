@@ -118,4 +118,4 @@ if __name__=='__main__':
     b = 5
     c = 10
     d = 20
-    test_thread(d, False)
+    test_thread(d, True)
