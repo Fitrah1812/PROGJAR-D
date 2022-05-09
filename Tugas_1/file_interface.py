@@ -26,18 +26,33 @@ class FileInterface:
         except Exception as e:
             return dict(status='ERROR',data=str(e))
 
-    # def post(sel.params=[]):
-    #     try:
-
-    #         filename = params[0]
-    #         if(filename == ''):
-    #             return None
-             
-    #     except Exception as e:
-    #         return dict(status='ERROR',data=str(e))
-
+    def post(self,params=[]):
+        text_message = 'Jumlah parameter tidak boleh kurang atau lebih dari dua'
+        if not (len(params) == 2):
+            return dict(status='ERROR',data=text_message)    
+        filename = params[0]
+        #cek data apakah ada
+        if os.path.exists(filename):
+            return dict(status='ERROR',data=f'{filename} file sudah ada')
+ 
+        file = base64.b64decode(params[1])
+        #cek file supaya diopen
+        fp = open(filename,'wb+')
+        fp.write(file)
+        fp.close()
+        return dict(status='OK',data=f'file {filename} berhasil diupload')
 
     def put(self,params=[]):
+        try:
+            filename = params[0]
+            if(filename == ''):
+                return None
+            os.remove(f"{filename}")
+            return dict(status='OK')
+        except Exception as e:
+            return dict(status='ERROR',data=str(e))
+    
+    def delete(self,params=[]):
         try:
             filename = params[0]
             if(filename == ''):
