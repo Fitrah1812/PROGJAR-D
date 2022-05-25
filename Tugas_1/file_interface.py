@@ -41,16 +41,6 @@ class FileInterface:
         fp.write(file)
         fp.close()
         return dict(status='OK',data=f'file {filename} berhasil diupload')
-
-    def put(self,params=[]):
-        try:
-            filename = params[0]
-            if(filename == ''):
-                return None
-            os.remove(f"{filename}")
-            return dict(status='OK')
-        except Exception as e:
-            return dict(status='ERROR',data=str(e))
     
     def delete(self,params=[]):
         try:
